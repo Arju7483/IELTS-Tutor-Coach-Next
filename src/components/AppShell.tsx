@@ -78,8 +78,8 @@ export default function AppShell({ children }: AppShellProps) {
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex md:w-64 flex-col fixed inset-y-0 left-0 bg-dark-card border-r border-dark-border z-20">
         <div className="p-6 flex items-center gap-2 border-b border-dark-border">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-violet flex items-center justify-center font-display font-extrabold text-dark text-md">
-            I
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-violet flex items-center justify-center font-display font-extrabold text-dark text-sm">
+            AI
           </div>
           <span className="font-display font-bold text-xl tracking-tight">
             IELTS<span className="text-primary">Coach</span>
@@ -134,8 +134,8 @@ export default function AppShell({ children }: AppShellProps) {
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 bg-dark-card border-b border-dark-border sticky top-0 z-30">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-violet flex items-center justify-center font-display font-extrabold text-dark text-md">
-            I
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-violet flex items-center justify-center font-display font-extrabold text-dark text-sm">
+            AI
           </div>
           <span className="font-display font-bold text-lg tracking-tight">
             IELTS<span className="text-primary">Coach</span>

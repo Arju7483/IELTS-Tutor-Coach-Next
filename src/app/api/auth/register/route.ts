@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { hashPassword, signToken } from '@/lib/auth';
+import { applyRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rateLimit';
+import { seedDatabase } from '@/lib/seeds';
 
 export async function POST(req: NextRequest) {
   try {
+    // Apply rate limiting to prevent abuse
+    const rateLimitResponse = applyRateLimit(
+      getClientIdentifier(req),
+      RATE_LIMITS.AUTH
+    );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const { email, password, name } = await req.json();
 
     if (!email || !password) {
@@ -22,6 +33,9 @@ export async function POST(req: NextRequest) {
     if (existing) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
     }
+
+    // Seed the database with initial data
+    await seedDatabase(db);
 
     const result = await users.insertOne({
       email: email.toLowerCase(),

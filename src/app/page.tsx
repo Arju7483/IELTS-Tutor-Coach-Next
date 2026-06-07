@@ -10,8 +10,8 @@ export default function Home() {
       {/* Header */}
       <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between z-10">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-violet flex items-center justify-center font-display font-extrabold text-dark text-xl shadow-glow-primary">
-            I
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-violet flex items-center justify-center font-display font-extrabold text-dark text-sm shadow-glow-primary">
+            AI
           </div>
           <span className="font-display font-bold text-2xl tracking-tight bg-gradient-to-r from-white via-foreground to-zinc-400 bg-clip-text text-transparent">
             IELTS<span className="text-primary">Coach</span>

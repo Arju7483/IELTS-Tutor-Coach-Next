@@ -1,0 +1,16 @@
+// Add to your app/layout.tsx for Google Analytics
+export const metadata = {
+  title: 'IELTS Coach AI - Free AI-Powered IELTS Preparation',
+  description: 'Get personalized IELTS coaching with AI-powered speaking and writing evaluations. Practice with real IELTS questions and improve your band score.',
+  keywords: 'IELTS, AI coach, IELTS preparation, speaking practice, writing practice, band score',
+  openGraph: {
+    title: 'IELTS Coach AI - Free AI IELTS Preparation',
+    description: 'AI-powered IELTS coaching platform with personalized feedback',
+    url: 'https://your-domain.vercel.app',
+    siteName: 'IELTS Coach AI'
+  }
+}
+
+// Add Google Analytics
+// Add this script tag to your layout.tsx head:
+// <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>

@@ -2,12 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { getUserFromRequest } from '@/lib/auth';
 import { evaluateWriting } from '@/lib/gemini';
+import { applyRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rateLimit';
 
 export async function POST(req: NextRequest) {
   try {
     const user = getUserFromRequest(req);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Apply rate limiting for AI evaluation
+    const rateLimitResponse = applyRateLimit(
+      getClientIdentifier(req, user.userId),
+      RATE_LIMITS.AI_EVALUATION
+    );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
     const { essay, prompt, questionId } = await req.json();

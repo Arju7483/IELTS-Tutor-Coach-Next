@@ -54,8 +54,8 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md glass-card p-8 md:p-10 rounded-3xl z-10 relative">
         <div className="text-center mb-8">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-violet items-center justify-center font-display font-extrabold text-dark text-2xl shadow-glow-primary mb-4">
-            I
+          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary to-violet items-center justify-center font-display font-extrabold text-dark text-lg shadow-glow-primary mb-4">
+            AI
           </div>
           <h1 className="font-display font-extrabold text-3xl text-white tracking-tight">Welcome Back</h1>
           <p className="text-zinc-400 text-sm mt-2">Sign in to resume your IELTS coaching path</p>
@@ -81,7 +81,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="candidate@example.com"
-                className="w-full pl-11 glass-input focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full glass-input focus:border-primary focus:ring-1 focus:ring-primary"
+                style={{ paddingLeft: '2.75rem' }}
               />
             </div>
           </div>
@@ -100,7 +101,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-11 glass-input focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full glass-input focus:border-primary focus:ring-1 focus:ring-primary"
+                style={{ paddingLeft: '2.75rem' }}
               />
             </div>
           </div>

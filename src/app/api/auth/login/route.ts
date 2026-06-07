@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { comparePassword, signToken } from '@/lib/auth';
+import { applyRateLimit, getClientIdentifier, RATE_LIMITS } from '@/lib/rateLimit';
+import { seedDatabase } from '@/lib/seeds';
 
 export async function POST(req: NextRequest) {
   try {
+    // Apply rate limiting to prevent brute force attacks
+    const rateLimitResponse = applyRateLimit(
+      getClientIdentifier(req),
+      RATE_LIMITS.AUTH
+    );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const { email, password } = await req.json();
 
     if (!email || !password) {
@@ -13,6 +24,9 @@ export async function POST(req: NextRequest) {
     const client = await clientPromise;
     const db = client.db('ielts_coach');
     const users = db.collection('users');
+
+    // Ensure seed data exists
+    await seedDatabase(db);
 
     const user = await users.findOne({ email: email.toLowerCase() });
     if (!user) {

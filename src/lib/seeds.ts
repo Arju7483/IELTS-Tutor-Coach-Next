@@ -1,3 +1,5 @@
+import { Db } from 'mongodb';
+
 /**
  * Seed data for IELTS Writing Task 2 questions, Speaking questions, and Vocabulary words.
  * Used by API routes on first request when collections are empty.
@@ -165,3 +167,37 @@ export const vocabSeeds = [
   { word: "deleterious", phonetic: "/ˌdelɪˈtɪəriəs/", partOfSpeech: "adjective", definition: "Causing harm or damage.", example: "The deleterious effects of air pollution on cardiovascular health are well documented.", synonyms: ["harmful", "noxious", "injurious"], difficulty: "band9" },
   { word: "concomitant", phonetic: "/kənˈkɒmɪtənt/", partOfSpeech: "adjective", definition: "Naturally accompanying or associated.", example: "Economic growth and its concomitant environmental degradation present a complex policy dilemma.", synonyms: ["accompanying", "associated", "attendant"], difficulty: "band9" },
 ];
+
+
+export async function seedDatabase(db: Db) {
+  try {
+    const vocabCol = db.collection('vocab_words');
+    const vocabCount = await vocabCol.countDocuments();
+    if (vocabCount === 0) {
+      const vocabDocs = vocabSeeds.map(v => ({ ...v, userId: 'system', createdAt: new Date() }));
+      await vocabCol.insertMany(vocabDocs);
+      console.log(`Seeded ${vocabDocs.length} vocabulary words`);
+    }
+
+    const speakingCol = db.collection('speaking_questions');
+    const speakingCount = await speakingCol.countDocuments();
+    if (speakingCount === 0) {
+      const speakingDocs = speakingSeeds.map(s => ({ ...s, isActive: true, createdAt: new Date() }));
+      await speakingCol.insertMany(speakingDocs);
+      console.log(`Seeded ${speakingDocs.length} speaking questions`);
+    }
+
+    const writingCol = db.collection('writing_task2_questions');
+    const writingCount = await writingCol.countDocuments();
+    if (writingCount === 0) {
+      const writingDocs = writingTask2Seeds.map(s => ({ ...s, isActive: true, createdAt: new Date() }));
+      await writingCol.insertMany(writingDocs);
+      console.log(`Seeded ${writingDocs.length} writing task 2 questions`);
+    }
+
+    return { success: true, message: 'Database seeding completed successfully' };
+  } catch (error) {
+    console.error('Database seeding failed:', error);
+    return { success: false, error: error };
+  }
+}
