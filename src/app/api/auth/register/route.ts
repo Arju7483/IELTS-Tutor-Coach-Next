@@ -56,6 +56,16 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('Register error:', err);
+    
+    // Check if it's a MongoDB connection error
+    if (err instanceof Error) {
+      if (err.message.includes('ECONNREFUSED') || err.message.includes('MongoNetworkError')) {
+        return NextResponse.json({ 
+          error: 'Database connection failed. Please ensure MongoDB is running or check your connection string.' 
+        }, { status: 503 });
+      }
+    }
+    
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
