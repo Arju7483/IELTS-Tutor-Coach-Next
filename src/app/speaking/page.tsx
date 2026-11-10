@@ -42,8 +42,18 @@ export default function SpeakingPage() {
   const [elapsedTime, setElapsedTime] = useState(0); // in seconds
   const [playbackState, setPlaybackState] = useState<'idle' | 'playing' | 'paused'>('idle');
 
-  // Limit: 4 minutes = 240 seconds
-  const maxSpeakingLimit = 240; 
+  // Recording time limit based on question part:
+  // Part 1: 1 min (60s), Part 2: 2 mins (120s), Part 3: 4 mins (240s)
+  const getMaxSpeakingLimit = (partName?: string) => {
+    if (!partName) return 240;
+    const p = partName.toLowerCase();
+    if (p.includes('2') || p.includes('two')) return 120; // 2 minutes (Part 2)
+    if (p.includes('3') || p.includes('three')) return 240; // 4 minutes (Part 3)
+    if (p.includes('1') || p.includes('one')) return 60;  // 1 minute (Part 1)
+    return 240;
+  };
+
+  const maxSpeakingLimit = getMaxSpeakingLimit(currentQuestion?.part || part);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -84,7 +94,7 @@ export default function SpeakingPage() {
     if (recordingState === 'recording') {
       timerRef.current = setInterval(() => {
         setElapsedTime((prev) => {
-          if (prev >= maxSpeakingLimit) {
+          if (prev + 1 >= maxSpeakingLimit) {
             handleStopRecording();
             return maxSpeakingLimit;
           }
@@ -99,7 +109,7 @@ export default function SpeakingPage() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [recordingState]);
+  }, [recordingState, maxSpeakingLimit]);
 
   useEffect(() => {
     if (!evaluating) return;
@@ -226,23 +236,23 @@ export default function SpeakingPage() {
   };
 
   const handleStopRecording = () => {
-    if (mediaRecorderRef.current && recordingState !== 'idle') {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
       // Stop all tracks on the stream to release the mic icon in the browser
       mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
-      setRecordingState('idle');
     }
+    setRecordingState('idle');
   };
 
   const handlePauseRecording = () => {
-    if (mediaRecorderRef.current && recordingState === 'recording') {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.pause();
       setRecordingState('paused');
     }
   };
 
   const handleResumeRecording = () => {
-    if (mediaRecorderRef.current && recordingState === 'paused') {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
       mediaRecorderRef.current.resume();
       setRecordingState('recording');
     }
@@ -331,7 +341,7 @@ export default function SpeakingPage() {
               <Mic className="w-8 h-8 text-primary" />
               Speaking Practice
             </h1>
-            <p className="text-zinc-400 mt-2">Record speeches (up to 4 minutes) and receive instant, criterion feedback</p>
+            <p className="text-zinc-400 mt-2">Record speeches (Part 2: 2 mins, Part 3: 4 mins) and receive instant, criterion feedback</p>
           </div>
           <button
             onClick={() => setShowGenModal(true)}
@@ -349,7 +359,8 @@ export default function SpeakingPage() {
             <select
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="w-full glass-input"
+              disabled={recordingState !== 'idle'}
+              className="w-full glass-input disabled:opacity-50"
             >
               <option value="">All Topics</option>
               {metadata?.topics.map((t) => (
@@ -365,7 +376,8 @@ export default function SpeakingPage() {
             <select
               value={part}
               onChange={(e) => setPart(e.target.value)}
-              className="w-full glass-input"
+              disabled={recordingState !== 'idle'}
+              className="w-full glass-input disabled:opacity-50"
             >
               <option value="">All Parts</option>
               {metadata?.parts.map((p) => (
@@ -378,7 +390,7 @@ export default function SpeakingPage() {
 
           <button
             onClick={fetchQuestion}
-            disabled={fetchingQuestion}
+            disabled={fetchingQuestion || recordingState !== 'idle'}
             className="self-end px-6 py-3.5 rounded-xl bg-dark-light hover:bg-dark-border text-white border border-dark-border font-semibold flex items-center gap-2 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${fetchingQuestion ? 'animate-spin' : ''}`} />
@@ -405,6 +417,9 @@ export default function SpeakingPage() {
               </span>
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-zinc-800 text-zinc-400">
                 {currentQuestion.difficulty}
+              </span>
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-subtle text-accent border border-accent/20">
+                {formatTime(maxSpeakingLimit)} limit
               </span>
             </div>
             <div className="space-y-3">
@@ -675,9 +690,9 @@ export default function SpeakingPage() {
                     onChange={(e) => setCustomPart(e.target.value)}
                     className="w-full glass-input"
                   >
-                    <option value="Part 1">Part 1 (Short Q&A)</option>
-                    <option value="Part 2">Part 2 (Long Turn Cue Card)</option>
-                    <option value="Part 3">Part 3 (Analytical Discussion)</option>
+                    <option value="Part 1">Part 1 (Short Q&A - 1 min limit)</option>
+                    <option value="Part 2">Part 2 (Long Turn Cue Card - 2 mins limit)</option>
+                    <option value="Part 3">Part 3 (Analytical Discussion - 4 mins limit)</option>
                   </select>
                 </div>
 

@@ -82,7 +82,7 @@ export default function Home() {
             </div>
             <h3 className="font-display font-bold text-xl text-white mb-2">Speaking Critiques</h3>
             <p className="text-zinc-400 text-sm leading-relaxed">
-              Record short tasks or full 3-4 minute speaking cards. Our AI analyzes pitch, vocabulary, grammar, and fluency to deliver structured correction.
+              Record Part 2 cue cards (2 mins) or Part 3 discussions (4 mins). Our AI analyzes pitch, vocabulary, grammar, and fluency to deliver structured correction.
             </p>
           </div>
 
