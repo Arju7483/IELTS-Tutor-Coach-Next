@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, PenTool, Mic, BookOpen, LogOut, Menu, X, User, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, PenTool, Mic, BookOpen, LogOut, Menu, X, User } from 'lucide-react';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -59,7 +59,6 @@ export default function AppShell({ children }: AppShellProps) {
     { name: 'Dashboard', href: '/progress', icon: LayoutDashboard },
     { name: 'Writing Practice', href: '/writing', icon: PenTool },
     { name: 'Speaking Practice', href: '/speaking', icon: Mic },
-    { name: 'Voice Chat', href: '/voice-chat', icon: MessageSquare },
     { name: 'Vocabulary', href: '/vocab', icon: BookOpen },
   ];
 
